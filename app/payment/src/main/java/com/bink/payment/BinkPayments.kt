@@ -1,8 +1,8 @@
-package com.bink.payments
+package com.bink.payment
 
 import kotlin.properties.Delegates
 
-class BinkPayments {
+object BinkPayments {
 
     private lateinit var userToken: String
     private lateinit var spreedlyEnvironmentKey: String
@@ -10,6 +10,9 @@ class BinkPayments {
     private lateinit var binkLogger: BinkLogger
 
     fun init(userToken: String, spreedlyEnvironmentKey: String, isDebug: Boolean) {
+        if (userToken.isBlank()) throw NullPointerException("User token must not be null or blank")
+        if (spreedlyEnvironmentKey.isBlank()) throw NullPointerException("Spreedly Environment Key must not be null or blank")
+
         this.userToken = userToken
         this.spreedlyEnvironmentKey = spreedlyEnvironmentKey
         this.isDebug = isDebug
