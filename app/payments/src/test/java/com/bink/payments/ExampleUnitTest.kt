@@ -1,4 +1,4 @@
-package com.bink.payment
+package com.bink.payments
 
 import org.junit.Test
 

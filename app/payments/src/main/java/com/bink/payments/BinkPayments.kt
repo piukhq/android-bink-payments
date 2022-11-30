@@ -1,4 +1,4 @@
-package com.bink.payment
+package com.bink.payments
 
 import kotlin.properties.Delegates
 

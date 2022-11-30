@@ -12,7 +12,8 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Bink Libraries"
+rootProject.name = "Libraries"
 include ':app'
-include ':app:payments'
-include ':app:payment'
+include ':payments'
+project(':payments').projectDir = new File(rootDir, 'app/payments/')
+
