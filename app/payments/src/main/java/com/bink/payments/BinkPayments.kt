@@ -1,5 +1,11 @@
 package com.bink.payments
 
+import com.bink.payments.di.networkModule
+import com.bink.payments.di.spreedlyModule
+import com.bink.payments.di.viewModelModule
+import com.bink.payments.viewmodel.PaymentCardViewModel
+import org.koin.core.context.startKoin
+import org.koin.java.KoinJavaComponent.inject
 import kotlin.properties.Delegates
 
 object BinkPayments {
@@ -23,6 +29,10 @@ object BinkPayments {
             this.binkLogger.log(BinkLogger.LogType.VERBOSE, "Bink Payments SDK Initialised")
             this.binkLogger.log(BinkLogger.LogType.DEBUG, "User token set to $userToken")
             this.binkLogger.log(BinkLogger.LogType.DEBUG, "Spreedly Environment Token set to $spreedlyEnvironmentKey")
+
+            startKoin {
+                modules(networkModule, spreedlyModule, viewModelModule)
+            }
         }
     }
 

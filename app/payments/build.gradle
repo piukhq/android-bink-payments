@@ -1,7 +1,10 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
+
+apply plugin: 'kotlin-kapt'
 
 android {
     namespace 'com.bink.payments'
@@ -32,10 +35,33 @@ android {
 
 dependencies {
 
+    def retrofit_version = "2.9.0"
+    def moshi_version = "1.13.0"
+    def koin_version = "3.3.0"
+    def coroutines_version = "1.6.4"
+    def lifecycle_version = "2.5.1"
+
+
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.7.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+
+    //Kotlin coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
+
+    // retrofit & moshi
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+    implementation("com.squareup.moshi:moshi-kotlin:$moshi_version")
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.13.0")
+
+    //Koin
+    implementation "io.insert-koin:koin-android:$koin_version"
+
+    //VM
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
 }
