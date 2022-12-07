@@ -1,11 +1,12 @@
 package com.bink.payments
 
+import android.app.Activity
+import android.content.Intent
+import androidx.fragment.app.Fragment
 import com.bink.payments.di.networkModule
 import com.bink.payments.di.spreedlyModule
 import com.bink.payments.di.viewModelModule
-import com.bink.payments.viewmodel.PaymentCardViewModel
 import org.koin.core.context.startKoin
-import org.koin.java.KoinJavaComponent.inject
 import kotlin.properties.Delegates
 
 object BinkPayments {
@@ -14,6 +15,8 @@ object BinkPayments {
     private lateinit var spreedlyEnvironmentKey: String
     private var isDebug by Delegates.notNull<Boolean>()
     private lateinit var binkLogger: BinkLogger
+
+
 
     fun init(userToken: String, spreedlyEnvironmentKey: String, isDebug: Boolean) {
         if (userToken.isBlank()) throw NullPointerException("User token must not be null or blank")
@@ -34,6 +37,23 @@ object BinkPayments {
                 modules(networkModule, spreedlyModule, viewModelModule)
             }
         }
+    }
+
+    fun startCardEntry(fragment: Fragment) {
+        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
+            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
+        }
+
+        val context = fragment.context ?: return
+        context.startActivity(Intent(context, BinkPaymentsActivity::class.java))
+    }
+
+    fun startCardEntry(activity: Activity) {
+        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
+            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
+        }
+
+        activity.startActivity(Intent(activity, BinkPaymentsActivity::class.java))
     }
 
 }
