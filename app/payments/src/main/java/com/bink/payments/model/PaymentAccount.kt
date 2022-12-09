@@ -2,7 +2,7 @@ package com.bink.payments.model
 
 
 import com.bink.payments.utils.StringUtils
-import com.bink.payments.utils.md5
+import com.bink.payments.utils.StringUtils.md5
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

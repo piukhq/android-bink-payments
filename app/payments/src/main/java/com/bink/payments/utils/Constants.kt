@@ -7,3 +7,6 @@ const val BINK_PAYMENTS_OKHTTP = "binkPaymentsOkhttp"
 const val BINK_PAYMENTS_RETROFIT = "binkPaymentsRetrofit"
 
 const val BASE_URL = "https://api.dev.gb.bink.com/v2/"
+
+const val EXPIRY_YEAR = 2000
+

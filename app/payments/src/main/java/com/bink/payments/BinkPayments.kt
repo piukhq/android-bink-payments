@@ -14,10 +14,21 @@ object BinkPayments {
     private lateinit var userToken: String
     private lateinit var spreedlyEnvironmentKey: String
     private var isDebug by Delegates.notNull<Boolean>()
+
     private lateinit var binkLogger: BinkLogger
 
+    fun getBinkLogger(): BinkLogger {
+        if (!this::binkLogger.isInitialized) throw NullPointerException("The Bink Payments SDK needs to be initialized first")
+        return binkLogger
+    }
 
-
+    /**
+     * Initialize the Bink Payments library.
+     *
+     * @param userToken: The token required to use the Bink API.
+     * @param spreedlyEnvironmentKey: The key required to use the Spreedly API.
+     * @param isDebug: If true, enable debug logging.
+     */
     fun init(userToken: String, spreedlyEnvironmentKey: String, isDebug: Boolean) {
         if (userToken.isBlank()) throw NullPointerException("User token must not be null or blank")
         if (spreedlyEnvironmentKey.isBlank()) throw NullPointerException("Spreedly Environment Key must not be null or blank")
@@ -39,6 +50,11 @@ object BinkPayments {
         }
     }
 
+    /**
+     * Start the Bink Payments activity.
+     *
+     * @param fragment: The fragment launching the Bink Payments activity.
+     */
     fun startCardEntry(fragment: Fragment) {
         if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
             throw RuntimeException("The Bink Payments SDK needs to be initialized first")
@@ -48,6 +64,11 @@ object BinkPayments {
         context.startActivity(Intent(context, BinkPaymentsActivity::class.java))
     }
 
+    /**
+     * Start the Bink Payments activity.
+     *
+     * @param activity: The activity launching the Bink Payments activity.
+     */
     fun startCardEntry(activity: Activity) {
         if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
             throw RuntimeException("The Bink Payments SDK needs to be initialized first")

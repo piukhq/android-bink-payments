@@ -3,9 +3,17 @@ package com.bink.payments
 import android.util.Log
 
 /**
- * Set a logType upon initialization
+ * Helper class for creating logs.
+ *
+ * @param applicationLogType: An enum class to set what level of logging the current app is
  */
 class BinkLogger(private val applicationLogType: LogType) {
+
+    enum class LogType {
+        DEBUG,
+        VERBOSE,
+        ERROR
+    }
 
     init {
         if (applicationLogType == LogType.DEBUG) {
@@ -17,15 +25,11 @@ class BinkLogger(private val applicationLogType: LogType) {
         private const val LOGTAG = "BinkPaymentsLog"
     }
 
-    enum class LogType {
-        DEBUG,
-        VERBOSE,
-        ERROR
-    }
-
     /**
-     * If the application is set to debug, we want to display the log under all conditions.
-     * Otherwise, we only want to display verbose and error logs whilst the application isn't in debug.
+     * Log a message to the console.
+     *
+     * @param currentLogType: An enum class to set what level of logging the current message is.
+     * @param message: The output of the log.
      */
     fun log(currentLogType: LogType, message: String) {
         if (applicationLogType == LogType.DEBUG) {
