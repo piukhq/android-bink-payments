@@ -13,6 +13,12 @@ import kotlinx.coroutines.launch
 
 class PaymentCardViewModel(private val addPaymentCardRepository: PaymentCardRepository) : ViewModel() {
 
+    private var logger: BinkLogger = BinkPayments.getBinkLogger()
+
+    init {
+        logger.log(currentLogType = BinkLogger.LogType.DEBUG, message = "Payment Card ViewModel Initialized")
+    }
+
     /**
      * Tokenize payment card with spreedly and send it to the Bink API.
      *
@@ -21,6 +27,7 @@ class PaymentCardViewModel(private val addPaymentCardRepository: PaymentCardRepo
      * @param spreedlyEnvironmentKey: The key required to use the Spreedly API.
      */
     fun sendPaymentCardToSpreedly(cardNumber: String, paymentAccount: PaymentAccount, spreedlyEnvironmentKey: String) {
+        logger.log(currentLogType = BinkLogger.LogType.DEBUG, message = "Sending payment card to spreedly")
         val spreedlyCreditCard = SpreedlyCreditCard(
             cardNumber,
             paymentAccount.expiryMonth,
@@ -40,7 +47,7 @@ class PaymentCardViewModel(private val addPaymentCardRepository: PaymentCardRepo
 
                 spreedlyResponse.let { response ->
 
-                    BinkPayments.getBinkLogger().log(currentLogType = BinkLogger.LogType.DEBUG, message = "Card successfully tokenized with spreedly")
+                    logger.log(currentLogType = BinkLogger.LogType.DEBUG, message = "Card successfully tokenized with spreedly")
 
                     paymentAccount.apply {
                         token = response.transaction.payment_method.token
@@ -51,10 +58,10 @@ class PaymentCardViewModel(private val addPaymentCardRepository: PaymentCardRepo
 
                     addPaymentCardRepository.addPaymentCard(paymentAccount)
 
-                    BinkPayments.getBinkLogger().log(currentLogType = BinkLogger.LogType.DEBUG, message = "Payment card ${paymentAccount.nameOnCard} successfully added")
+                    logger.log(currentLogType = BinkLogger.LogType.DEBUG, message = "Payment card ${paymentAccount.nameOnCard} successfully added")
                 }
             } catch (e: Exception) {
-                BinkPayments.getBinkLogger().log(currentLogType = BinkLogger.LogType.ERROR, message = "${e.message}")
+                logger.log(currentLogType = BinkLogger.LogType.ERROR, message = "${e.message}")
                 //TODO: Error
                 /**
                  * Show alert with title "Error Adding Card" and
