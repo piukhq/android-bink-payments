@@ -9,7 +9,6 @@ import retrofit2.http.Query
 
 interface SpreedlyService {
 
-    @Headers("Content-Type: application/json")
     @POST("https://core.spreedly.com/v1/payment_methods.json")
     suspend fun postPaymentCardToSpreedly(
         @Body spreedlyCard: SpreedlyPaymentCard,
