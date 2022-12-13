@@ -4,20 +4,45 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bink.payments.BinkLogger
 import com.bink.payments.BinkPayments
+import com.bink.payments.screens.PaymentCardUiState
 import com.bink.payments.data.PaymentCardRepository
 import com.bink.payments.model.PaymentAccount
 import com.bink.payments.model.SpreedlyCreditCard
 import com.bink.payments.model.SpreedlyPaymentCard
 import com.bink.payments.model.SpreedlyPaymentMethod
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class PaymentCardViewModel(private val addPaymentCardRepository: PaymentCardRepository) : ViewModel() {
 
     private var logger: BinkLogger = BinkPayments.getBinkLogger()
 
+    private val _uiState = MutableStateFlow(PaymentCardUiState())
+    val uiState: StateFlow<PaymentCardUiState> = _uiState.asStateFlow()
+
     init {
         logger.log(currentLogType = BinkLogger.LogType.DEBUG, message = "Payment Card ViewModel Initialized")
     }
+
+    fun setCardNumber(value: String){
+        _uiState.update { it.copy(cardNumber = value) }
+    }
+
+    fun setNameOnCard(value: String){
+        _uiState.update { it.copy(nameOnCard = value) }
+    }
+
+    fun setCardNickname(value: String){
+        _uiState.update { it.copy(cardNickname = value) }
+    }
+
+    fun setCardExpiry(value: String){
+        _uiState.update { it.copy(cardExpiry = value) }
+    }
+
 
     /**
      * Tokenize payment card with spreedly and send it to the Bink API.

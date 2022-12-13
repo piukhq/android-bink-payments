@@ -1,12 +1,11 @@
 package com.bink.payments
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.fragment.app.Fragment
 import com.bink.payments.di.networkModule
 import com.bink.payments.di.spreedlyModule
 import com.bink.payments.di.viewModelModule
+import com.bink.payments.screens.BinkPaymentsActivity
 import org.koin.core.context.startKoin
 import kotlin.properties.Delegates
 

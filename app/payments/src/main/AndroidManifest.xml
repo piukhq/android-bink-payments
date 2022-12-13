@@ -5,7 +5,7 @@
 
     <application>
         <activity
-            android:name=".BinkPaymentsActivity"
+            android:name=".screens.BinkPaymentsActivity"
             android:windowSoftInputMode="adjustResize" />
     </application>
 
