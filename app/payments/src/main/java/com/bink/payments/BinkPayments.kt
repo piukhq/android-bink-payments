@@ -1,6 +1,7 @@
 package com.bink.payments
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import androidx.fragment.app.Fragment
 import com.bink.payments.di.networkModule
@@ -53,28 +54,14 @@ object BinkPayments {
     /**
      * Start the Bink Payments activity.
      *
-     * @param fragment: The fragment launching the Bink Payments activity.
+     * @param context: The context launching the Bink Payments activity.
      */
-    fun startCardEntry(fragment: Fragment) {
+    fun startCardEntry(context: Context) {
         if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
             throw RuntimeException("The Bink Payments SDK needs to be initialized first")
         }
 
-        val context = fragment.context ?: return
         context.startActivity(Intent(context, BinkPaymentsActivity::class.java))
-    }
-
-    /**
-     * Start the Bink Payments activity.
-     *
-     * @param activity: The activity launching the Bink Payments activity.
-     */
-    fun startCardEntry(activity: Activity) {
-        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
-            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
-        }
-
-        activity.startActivity(Intent(activity, BinkPaymentsActivity::class.java))
     }
 
 }

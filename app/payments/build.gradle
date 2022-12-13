@@ -4,8 +4,6 @@ plugins {
     id 'kotlin-kapt'
 }
 
-apply plugin: 'kotlin-kapt'
-
 android {
     namespace 'com.bink.payments'
     compileSdk 33
