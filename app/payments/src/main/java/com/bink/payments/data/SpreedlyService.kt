@@ -3,7 +3,6 @@ package com.bink.payments.data
 import com.bink.payments.model.SpreedlyPaymentCard
 import com.bink.payments.model.SpreedlyResponse
 import retrofit2.http.Body
-import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
 

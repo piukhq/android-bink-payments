@@ -1,16 +1,16 @@
 package com.bink.payments.screens
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,11 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bink.payments.*
 import com.bink.payments.model.PaymentAccount
 import com.bink.payments.ui.BinkPaymentsTheme
 import com.bink.payments.utils.EXPIRY_YEAR
@@ -31,40 +31,57 @@ import org.koin.android.ext.android.inject
 
 class BinkPaymentsActivity : ComponentActivity() {
 
+    companion object {
+        const val binkPaymentsOptionsName = "binkPaymentsOptions"
+        val defaultBinkPaymentsOptions = BinkPaymentsOptions()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val paymentCardViewModel by inject<PaymentCardViewModel>()
 
+        getUiOptions()?.let { paymentCardViewModel.setUiOptions(it) }
+
         setContent {
+            val paymentCardUiState by paymentCardViewModel.uiState.collectAsState()
+
             BinkPaymentsTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    CreatePaymentCardScreen(paymentCardViewModel = paymentCardViewModel)
+                Surface(modifier = Modifier.fillMaxSize(), color = paymentCardUiState.binkPaymentsOptions.backgroundColor) {
+                    CreatePaymentCardScreen(paymentCardViewModel = paymentCardViewModel, paymentCardUiState = paymentCardUiState)
                 }
             }
         }
     }
 
+    @Suppress("DEPRECATION")
+    private fun getUiOptions(): BinkPaymentsOptions? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getSerializableExtra(binkPaymentsOptionsName, BinkPaymentsOptions::class.java)
+        } else {
+            intent.getSerializableExtra(binkPaymentsOptionsName) as? BinkPaymentsOptions
+        }
+    }
+
     @Composable
-    private fun CreatePaymentCardScreen(paymentCardViewModel: PaymentCardViewModel) {
-        val paymentCardUiState by paymentCardViewModel.uiState.collectAsState()
+    private fun CreatePaymentCardScreen(paymentCardViewModel: PaymentCardViewModel, paymentCardUiState: PaymentCardUiState) {
 
         Column(modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())) {
 
-            TopBar()
+            TopBar(paymentCardUiState = paymentCardUiState)
             CardDetailsInput(paymentCardViewModel = paymentCardViewModel, paymentCardUiState = paymentCardUiState)
 
         }
     }
 
     @Composable
-    private fun TopBar() {
+    private fun TopBar(paymentCardUiState: PaymentCardUiState) {
         Box(modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
-            .background(color = MaterialTheme.colors.primary)) {
+            .background(color = paymentCardUiState.binkPaymentsOptions.toolBarOptions.toolBarColor)) {
 
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                 .fillMaxHeight()
@@ -75,11 +92,17 @@ class BinkPaymentsActivity : ComponentActivity() {
                     },
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.ArrowBack,
+                        imageVector = paymentCardUiState.binkPaymentsOptions.toolBarOptions.backButtonIcon,
                         contentDescription = "Back", tint = Color.White
                     )
                 }
-                Text(text = "Parent Title", textAlign = TextAlign.Center, color = Color.White, style = MaterialTheme.typography.h3)
+                Text(text = paymentCardUiState.binkPaymentsOptions.toolBarOptions.backButtonTitle,
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    style = TextStyle(
+                        fontFamily = paymentCardUiState.binkPaymentsOptions.font,
+                        fontSize = 16.sp
+                    ))
             }
 
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center,
@@ -87,7 +110,13 @@ class BinkPaymentsActivity : ComponentActivity() {
                     .fillMaxWidth()
                     .fillMaxHeight()) {
 
-                Text(text = "Title", style = MaterialTheme.typography.h1, textAlign = TextAlign.Center, color = Color.White)
+                Text(text = paymentCardUiState.binkPaymentsOptions.toolBarOptions.toolBarTitle,
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    style = TextStyle(
+                        fontFamily = paymentCardUiState.binkPaymentsOptions.font,
+                        fontSize = 22.sp
+                    ))
             }
         }
     }
@@ -113,77 +142,131 @@ class BinkPaymentsActivity : ComponentActivity() {
                 paymentCardViewModel.setCardExpiry(it)
             })
 
+//            Button(onClick = {
+//                paymentCardViewModel.sendPaymentCardToSpreedly("5555 5555 5555 4444", paymentAccount, "1Lf7DiKgkcx5Anw7QxWdDxaKtTa")
+//            }) {
+//
+//            }
+
         }
     }
 
     @Composable
     private fun CardDetailsInputField(inputType: PaymentCardInputType, paymentCardUiState: PaymentCardUiState, callback: (String) -> Unit) {
+        val uiOptions = paymentCardUiState.binkPaymentsOptions.inputFieldOptions
+        val isUppercaseHints = uiOptions.upperCaseHints
+
         val hint = when (inputType) {
             PaymentCardInputType.NUMBER -> {
-                "Card Number"
+                if (!isUppercaseHints) "Card Number" else "CARD NUMBER"
             }
             PaymentCardInputType.NAME -> {
-                "Name on Card"
+                if (!isUppercaseHints) "Name on Card" else "NAME ON CARD"
+
             }
             PaymentCardInputType.NICKNAME -> {
-                "Card Nickname"
+                if (!isUppercaseHints) "Card Nickname" else "CARD NICKNAME"
+
             }
             PaymentCardInputType.EXPIRY -> {
-                "Card Expiry"
+                if (!isUppercaseHints) "Card Expiry" else "CARD EXPIRY"
             }
         }
 
-        TextField(
-            value = when (inputType) {
-                PaymentCardInputType.NUMBER -> {
-                    paymentCardUiState.cardNumber
-                }
-                PaymentCardInputType.NAME -> {
-                    paymentCardUiState.nameOnCard
-                }
-                PaymentCardInputType.NICKNAME -> {
-                    paymentCardUiState.cardNickname
-                }
-                PaymentCardInputType.EXPIRY -> {
-                    paymentCardUiState.cardExpiry
-                }
-            },
-            singleLine = true,
-            onValueChange = {
-                callback(it)
-            },
-            shape = RoundedCornerShape(8.dp),
+        val textFieldValue = when (inputType) {
+            PaymentCardInputType.NUMBER -> {
+                paymentCardUiState.cardNumber
+            }
+            PaymentCardInputType.NAME -> {
+                paymentCardUiState.nameOnCard
+            }
+            PaymentCardInputType.NICKNAME -> {
+                paymentCardUiState.cardNickname
+            }
+            PaymentCardInputType.EXPIRY -> {
+                paymentCardUiState.cardExpiry
+            }
+        }
 
-            colors = TextFieldDefaults.textFieldColors(
+        val textFieldColours = if (uiOptions.borderStyle == InputFieldBorderStyle.BOX) {
+            TextFieldDefaults.textFieldColors(
+                backgroundColor = uiOptions.backgroundColor,
+                textColor = uiOptions.textColor,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
-            ),
-            label = {
-                Text(
-                    text = hint,
-                    textAlign = TextAlign.Center,
-                    color = Color.Gray,
-                    style = TextStyle(
-                        fontFamily = FontFamily.Default,
-                        fontWeight = FontWeight.Light,
-                        fontSize = 14.sp
-                    ),
-                )
-            },
-            modifier = Modifier
+            )
+        } else {
+            TextFieldDefaults.textFieldColors(
+                backgroundColor = uiOptions.backgroundColor,
+                textColor = uiOptions.textColor,
+                focusedIndicatorColor = uiOptions.borderColor,
+                unfocusedIndicatorColor = uiOptions.borderColor
+            )
+        }
+
+        val textFieldModifier = if (uiOptions.borderStyle == InputFieldBorderStyle.BOX) {
+            Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
-        )
+                .border(width = uiOptions.borderWidth.dp, color = uiOptions.borderColor, shape = RoundedCornerShape(8.dp))
+        } else {
+            Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        }
+
+        if (uiOptions.hintStyle == InputFieldHintStyle.HEADER) {
+            Text(
+                text = hint,
+                textAlign = TextAlign.Left,
+                color = uiOptions.hintTextColor,
+                style = TextStyle(
+                    fontFamily = paymentCardUiState.binkPaymentsOptions.font,
+                    fontSize = 18.sp
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp)
+            )
+
+            TextField(
+                value = textFieldValue,
+                singleLine = true,
+                onValueChange = {
+                    callback(it)
+                },
+                colors = textFieldColours,
+                modifier = textFieldModifier
+            )
+        } else {
+            TextField(
+                value = textFieldValue,
+                singleLine = true,
+                onValueChange = {
+                    callback(it)
+                },
+                colors = textFieldColours,
+                label = {
+                    if (uiOptions.hintStyle == InputFieldHintStyle.INLINE) {
+                        Text(
+                            text = hint,
+                            textAlign = TextAlign.Center,
+                            color = uiOptions.hintTextColor,
+                            style = TextStyle(
+                                fontFamily = paymentCardUiState.binkPaymentsOptions.font,
+                                fontWeight = FontWeight.Light,
+                                fontSize = 14.sp
+                            ),
+                        )
+                    }
+                },
+                modifier = textFieldModifier
+            )
+        }
+
+
     }
-
-
-//    @Composable
-//    fun Greeting(paymentCardViewModel: PaymentCardViewModel) {
-//        Text(text = "BinkPayments SDK")
-//        val paymentAccount = getPaymentAccount()
-//        paymentCardViewModel.sendPaymentCardToSpreedly("5555 5555 5555 4444", paymentAccount, "1Lf7DiKgkcx5Anw7QxWdDxaKtTa")
-//    }
 
     private fun getPaymentAccount(): PaymentAccount {
         val nameOnCard = "Enoch"

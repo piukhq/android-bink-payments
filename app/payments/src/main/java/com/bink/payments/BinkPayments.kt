@@ -6,6 +6,7 @@ import com.bink.payments.di.networkModule
 import com.bink.payments.di.spreedlyModule
 import com.bink.payments.di.viewModelModule
 import com.bink.payments.screens.BinkPaymentsActivity
+import com.bink.payments.screens.BinkPaymentsOptions
 import org.koin.core.context.startKoin
 import kotlin.properties.Delegates
 
@@ -54,13 +55,18 @@ object BinkPayments {
      * Start the Bink Payments activity.
      *
      * @param context: The context launching the Bink Payments activity.
+     * @param binkPaymentsOptions: Custom UI options.
      */
-    fun startCardEntry(context: Context) {
+    fun startCardEntry(context: Context, binkPaymentsOptions: BinkPaymentsOptions? = null) {
         if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
             throw RuntimeException("The Bink Payments SDK needs to be initialized first")
         }
 
-        context.startActivity(Intent(context, BinkPaymentsActivity::class.java))
+        val intent = Intent(context, BinkPaymentsActivity::class.java)
+        binkPaymentsOptions?.let {
+            intent.putExtra("binkPaymentsOptions", it)
+        }
+        context.startActivity(intent)
     }
 
 }
