@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bink.core.PaymentAccountUtil
 import com.bink.payments.*
 import com.bink.payments.model.PaymentAccount
 import com.bink.payments.ui.BinkPaymentsTheme
@@ -141,6 +142,7 @@ class BinkPaymentsActivity : ComponentActivity() {
             CardDetailsInputField(inputType = PaymentCardInputType.EXPIRY, paymentCardUiState = paymentCardUiState, callback = {
                 paymentCardViewModel.setCardExpiry(it)
             })
+
 
 //            Button(onClick = {
 //                paymentCardViewModel.sendPaymentCardToSpreedly("5555 5555 5555 4444", paymentAccount, "1Lf7DiKgkcx5Anw7QxWdDxaKtTa")

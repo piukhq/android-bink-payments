@@ -17,3 +17,4 @@ include ':app'
 include ':payments'
 project(':payments').projectDir = new File(rootDir, 'app/payments/')
 
+include ':core'
