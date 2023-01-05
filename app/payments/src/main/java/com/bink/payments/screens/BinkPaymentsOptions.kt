@@ -53,7 +53,7 @@ data class ToolBarOptions(
  */
 data class InputFieldOptions(
     val upperCaseHints: Boolean = false,
-    val hintStyle: InputFieldHintStyle = InputFieldHintStyle.HEADER,
+    val hintStyle: InputFieldHintStyle = InputFieldHintStyle.INLINE,
     val hintTextColor: Color = Color.Gray,
     val cursorColor: Color = Color.Gray,
     val backgroundColor: Color = Color.White,
