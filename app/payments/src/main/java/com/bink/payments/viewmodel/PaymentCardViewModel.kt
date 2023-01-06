@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 class PaymentCardViewModel(private val addPaymentCardRepository: PaymentCardRepository) : ViewModel() {
 
     private var logger: BinkLogger = BinkPayments.getBinkLogger()
+    private lateinit var spreedlyEnvironmentKey: String
 
     private val _uiState = MutableStateFlow(PaymentCardUiState())
     val uiState: StateFlow<PaymentCardUiState> = _uiState.asStateFlow()
@@ -37,6 +38,10 @@ class PaymentCardViewModel(private val addPaymentCardRepository: PaymentCardRepo
 
     fun setUiOptions(binkPaymentsOptions: BinkPaymentsOptions) {
         _uiState.update { it.copy(binkPaymentsOptions = binkPaymentsOptions) }
+    }
+
+    fun setSpreedlyEnvironmentKey(spreedlyEnvironmentKey: String) {
+        this.spreedlyEnvironmentKey = spreedlyEnvironmentKey
     }
 
     fun setCardNumber(value: String) {
@@ -191,10 +196,8 @@ class PaymentCardViewModel(private val addPaymentCardRepository: PaymentCardRepo
 
     /**
      * Tokenize payment card with spreedly and send it to the Bink API.
-     *
-     * @param spreedlyEnvironmentKey: The key required to use the Spreedly API.
      */
-    fun sendPaymentCardToSpreedly(spreedlyEnvironmentKey: String) {
+    fun sendPaymentCardToSpreedly() {
         logger.log(currentLogType = BinkLogger.LogType.DEBUG, message = "Sending payment card to spreedly")
 
         getPaymentAccount()?.let { paymentAccount ->

@@ -18,8 +18,22 @@ data class BinkPaymentsOptions(
     val font: FontFamily = FontFamily.Default,
     val backgroundColor: Color = Color.White,
     val toolBarOptions: ToolBarOptions = ToolBarOptions(),
+    val binkPaymentsTheme: BinkPaymentsTheme = BinkPaymentsTheme(),
     val inputFieldOptions: InputFieldOptions = InputFieldOptions(),
 ) : java.io.Serializable
+
+/**
+ * UI options for the BinkPaymentsActivity.
+ *
+ * @param primaryColor: Primary Colour for toolbar and buttons.
+ * @param secondaryColor: Secondary Colour for text and checkboxes.
+ */
+
+data class BinkPaymentsTheme(
+    val primaryColor: Color = Color.Blue,
+    val secondaryColor: Color = Color.White,
+    val uncheckedColor: Color = Color.Black,
+)
 
 /**
  * UI options for the BinkPaymentsActivity.
@@ -34,8 +48,6 @@ data class ToolBarOptions(
     val backButtonTitle: String = "Back",
     val backButtonIcon: ImageVector = Icons.Filled.ArrowBack,
     val toolBarTitle: String = "Bink Payments",
-    val toolBarColor: Color = Color.Blue,
-    val toolbarTextColor: Color = Color.White,
 ) : java.io.Serializable
 
 /**
@@ -61,6 +73,7 @@ data class InputFieldOptions(
     val borderWidth: Int = 2,
     val borderColor: Color = Color.Gray,
     val borderStyle: InputFieldBorderStyle = InputFieldBorderStyle.BOX,
+    val checkBoxStyle: CheckBoxStyle = CheckBoxStyle.SWITCH,
 )
 
 enum class InputFieldHintStyle {
@@ -71,4 +84,9 @@ enum class InputFieldHintStyle {
 enum class InputFieldBorderStyle {
     BOX,
     UNDERLINE
+}
+
+enum class CheckBoxStyle {
+    BOX,
+    SWITCH
 }

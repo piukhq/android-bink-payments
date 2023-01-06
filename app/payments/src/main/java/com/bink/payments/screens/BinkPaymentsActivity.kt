@@ -36,6 +36,7 @@ class BinkPaymentsActivity : ComponentActivity() {
 
     companion object {
         const val binkPaymentsOptionsName = "binkPaymentsOptions"
+        const val spreedlyEnvKey = "spreedlyEnvironmentKey"
         val defaultBinkPaymentsOptions = BinkPaymentsOptions()
     }
 
@@ -45,6 +46,7 @@ class BinkPaymentsActivity : ComponentActivity() {
         val paymentCardViewModel by inject<PaymentCardViewModel>()
 
         getUiOptions()?.let { paymentCardViewModel.setUiOptions(it) }
+        intent.getStringExtra(spreedlyEnvKey)?.let { paymentCardViewModel.setSpreedlyEnvironmentKey(it) }
 
         setContent {
             val paymentCardUiState by paymentCardViewModel.uiState.collectAsState()
@@ -88,7 +90,7 @@ class BinkPaymentsActivity : ComponentActivity() {
         Box(modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
-            .background(color = paymentCardUiState.binkPaymentsOptions.toolBarOptions.toolBarColor)) {
+            .background(color = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.primaryColor)) {
 
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                 .fillMaxHeight()
@@ -100,12 +102,12 @@ class BinkPaymentsActivity : ComponentActivity() {
                 ) {
                     Icon(
                         imageVector = paymentCardUiState.binkPaymentsOptions.toolBarOptions.backButtonIcon,
-                        contentDescription = "Back", tint = Color.White
+                        contentDescription = "Back", tint = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.secondaryColor
                     )
                 }
                 Text(text = paymentCardUiState.binkPaymentsOptions.toolBarOptions.backButtonTitle,
                     textAlign = TextAlign.Center,
-                    color = Color.White,
+                    color = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.secondaryColor,
                     style = TextStyle(
                         fontFamily = paymentCardUiState.binkPaymentsOptions.font,
                         fontSize = 16.sp
@@ -119,7 +121,7 @@ class BinkPaymentsActivity : ComponentActivity() {
 
                 Text(text = paymentCardUiState.binkPaymentsOptions.toolBarOptions.toolBarTitle,
                     textAlign = TextAlign.Center,
-                    color = Color.White,
+                    color = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.secondaryColor,
                     style = TextStyle(
                         fontFamily = paymentCardUiState.binkPaymentsOptions.font,
                         fontSize = 22.sp
@@ -164,12 +166,13 @@ class BinkPaymentsActivity : ComponentActivity() {
                 }
             })
 
+            ToggleBox(paymentCardUiState = paymentCardUiState)
 
             Button(onClick = {
-                paymentCardViewModel.sendPaymentCardToSpreedly("1Lf7DiKgkcx5Anw7QxWdDxaKtTa")
-            }, colors = ButtonDefaults.buttonColors(backgroundColor = paymentCardUiState.binkPaymentsOptions.toolBarOptions.toolBarColor)) {
+                paymentCardViewModel.sendPaymentCardToSpreedly()
+            }, colors = ButtonDefaults.buttonColors(backgroundColor = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.primaryColor)) {
                 Text(text = "POST CARD",
-                    color = paymentCardUiState.binkPaymentsOptions.toolBarOptions.toolbarTextColor,
+                    color = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.secondaryColor,
                     style = TextStyle(
                         fontFamily = paymentCardUiState.binkPaymentsOptions.font,
                     ))
@@ -208,9 +211,9 @@ class BinkPaymentsActivity : ComponentActivity() {
             )
             Button(onClick = {
                 paymentCardViewModel.toggleErrorDialog()
-            }, colors = ButtonDefaults.buttonColors(backgroundColor = paymentCardUiState.binkPaymentsOptions.toolBarOptions.toolBarColor)) {
+            }, colors = ButtonDefaults.buttonColors(backgroundColor = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.primaryColor)) {
                 Text(text = "OK",
-                    color = paymentCardUiState.binkPaymentsOptions.toolBarOptions.toolbarTextColor,
+                    color = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.secondaryColor,
                     style = TextStyle(
                         fontFamily = paymentCardUiState.binkPaymentsOptions.font,
                     ))
@@ -371,6 +374,35 @@ class BinkPaymentsActivity : ComponentActivity() {
 
         }
 
+    }
+
+    @Composable
+    private fun ToggleBox(paymentCardUiState: PaymentCardUiState) {
+        val checkedState = remember { mutableStateOf(true) }
+        if (paymentCardUiState.binkPaymentsOptions.inputFieldOptions.checkBoxStyle == CheckBoxStyle.BOX) {
+            Checkbox(
+                checked = checkedState.value,
+                onCheckedChange = { checkedState.value = it },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.primaryColor,
+                    checkmarkColor = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.secondaryColor,
+                    uncheckedColor = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.primaryColor.copy(alpha = 0.5f)
+                )
+            )
+        } else {
+            Switch(
+                checked = checkedState.value,
+                onCheckedChange = { checkedState.value = it },
+                colors = SwitchDefaults.colors(
+                    checkedTrackColor = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.primaryColor,
+                    checkedTrackAlpha = 1f,
+                    checkedThumbColor = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.secondaryColor,
+                    uncheckedThumbColor = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.secondaryColor,
+                    uncheckedTrackColor = paymentCardUiState.binkPaymentsOptions.binkPaymentsTheme.primaryColor,
+                    uncheckedTrackAlpha = 0.5f
+                )
+            )
+        }
     }
 
 }

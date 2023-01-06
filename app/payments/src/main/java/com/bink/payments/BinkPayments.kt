@@ -46,6 +46,7 @@ object BinkPayments {
             this.binkLogger.log(BinkLogger.LogType.DEBUG, "Spreedly Environment Token set to $spreedlyEnvironmentKey")
 
             startKoin {
+                koin.setProperty("userToken", userToken)
                 modules(networkModule, spreedlyModule, viewModelModule)
             }
         }
@@ -64,7 +65,8 @@ object BinkPayments {
 
         val intent = Intent(context, BinkPaymentsActivity::class.java)
         binkPaymentsOptions?.let {
-            intent.putExtra("binkPaymentsOptions", it)
+            intent.putExtra(BinkPaymentsActivity.binkPaymentsOptionsName, it)
+            intent.putExtra(BinkPaymentsActivity.spreedlyEnvKey, spreedlyEnvironmentKey)
         }
         context.startActivity(intent)
     }
