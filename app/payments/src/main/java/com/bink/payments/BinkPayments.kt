@@ -66,8 +66,10 @@ object BinkPayments {
         val intent = Intent(context, BinkPaymentsActivity::class.java)
         binkPaymentsOptions?.let {
             intent.putExtra(BinkPaymentsActivity.binkPaymentsOptionsName, it)
-            intent.putExtra(BinkPaymentsActivity.spreedlyEnvKey, spreedlyEnvironmentKey)
         }
+
+        intent.putExtra(BinkPaymentsActivity.spreedlyEnvKey, spreedlyEnvironmentKey)
+
         context.startActivity(intent)
 
     }

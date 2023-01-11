@@ -33,7 +33,7 @@ data class BinkPaymentsTheme(
     val primaryColor: Color = Color.Blue,
     val secondaryColor: Color = Color.White,
     val uncheckedColor: Color = Color.Black,
-)
+) : java.io.Serializable
 
 /**
  * UI options for the BinkPaymentsActivity.
@@ -74,7 +74,7 @@ data class InputFieldOptions(
     val borderColor: Color = Color.Gray,
     val borderStyle: InputFieldBorderStyle = InputFieldBorderStyle.BOX,
     val checkBoxStyle: CheckBoxStyle = CheckBoxStyle.SWITCH,
-)
+) : java.io.Serializable
 
 enum class InputFieldHintStyle {
     INLINE,
