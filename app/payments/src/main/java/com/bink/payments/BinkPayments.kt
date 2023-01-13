@@ -2,11 +2,14 @@ package com.bink.payments
 
 import android.content.Context
 import android.content.Intent
+import androidx.activity.ComponentActivity
 import com.bink.payments.di.networkModule
 import com.bink.payments.di.spreedlyModule
 import com.bink.payments.di.viewModelModule
 import com.bink.payments.screens.BinkPaymentsActivity
 import com.bink.payments.screens.BinkPaymentsOptions
+import com.bink.payments.viewmodel.BinkPaymentViewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.context.startKoin
 import kotlin.properties.Delegates
 
@@ -62,7 +65,7 @@ object BinkPayments {
         if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
             throw RuntimeException("The Bink Payments SDK needs to be initialized first")
         }
-        
+
         val intent = Intent(context, BinkPaymentsActivity::class.java)
         binkPaymentsOptions?.let {
             intent.putExtra(BinkPaymentsActivity.binkPaymentsOptionsName, it)
@@ -73,5 +76,20 @@ object BinkPayments {
         context.startActivity(intent)
 
     }
+
+    fun getPLLStatus(context: Context) {
+        val viewModel: BinkPaymentViewModel by lazy {
+            (context as ComponentActivity).getViewModel()
+        }
+
+        viewModel.getWallet()
+
+    }
+
+    //1. Loop through cards with the configurePLLState method
+    //2. Return Loyalty/PaymentCardPLLState object that returns a list of all linked and unlinked Loyalty/Payment Cards to the card that was passed in to the configurePLLState function
+    //3. Get Loyalty/Payment Wallet and asynchronosly call configurePLLState(for:… again.
+    //4. Return local pllState to plldtatus method
+    //5. Pass new pllState back in refreshedLinkedState closure
 
 }
