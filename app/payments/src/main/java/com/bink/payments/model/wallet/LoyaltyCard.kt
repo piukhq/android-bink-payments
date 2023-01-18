@@ -15,7 +15,7 @@ data class LoyaltyCard(
     @Json(name = "loyalty_plan_id")
     val loyaltyPlanId: Int?,
     @Json(name = "pll_links")
-    val loyaltyCardPllLinks: List<LoyaltyCardPllLink>?,
+    val pllLinks: List<LoyaltyCardPllLink>?,
     @Json(name = "status")
     val status: Status?,
     @Json(name = "transactions")

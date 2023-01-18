@@ -11,5 +11,5 @@ data class UserWallet(
     @Json(name = "loyalty_cards")
     val loyaltyCards: List<LoyaltyCard>,
     @Json(name = "payment_accounts")
-    val paymentAccounts: List<PaymentCard>,
+    val paymentAccounts: List<PaymentAccount>,
 )

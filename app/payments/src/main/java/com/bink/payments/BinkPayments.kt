@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import com.bink.payments.di.networkModule
 import com.bink.payments.di.spreedlyModule
 import com.bink.payments.di.viewModelModule
+import com.bink.payments.model.wallet.*
 import com.bink.payments.screens.BinkPaymentsActivity
 import com.bink.payments.screens.BinkPaymentsOptions
 import com.bink.payments.viewmodel.BinkPaymentViewModel
@@ -74,22 +75,63 @@ object BinkPayments {
         intent.putExtra(BinkPaymentsActivity.spreedlyEnvKey, spreedlyEnvironmentKey)
 
         context.startActivity(intent)
-
     }
 
-    fun getPLLStatus(context: Context) {
+    /**
+     * Retrieve the user wallet.
+     *
+     * @param context: The context used for injecting the view model
+     * @param callback: Callback function that returns the user wallet retrieved with the current user token.
+     */
+    fun getWallet(context: Context, callback: (UserWallet) -> Unit) {
+        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
+            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
+        }
+
         val viewModel: BinkPaymentViewModel by lazy {
             (context as ComponentActivity).getViewModel()
         }
 
-        viewModel.getWallet()
-
+        viewModel.getWallet(callback)
     }
 
-    //1. Loop through cards with the configurePLLState method
-    //2. Return Loyalty/PaymentCardPLLState object that returns a list of all linked and unlinked Loyalty/Payment Cards to the card that was passed in to the configurePLLState function
-    //3. Get Loyalty/Payment Wallet and asynchronosly call configurePLLState(for:… again.
-    //4. Return local pllState to plldtatus method
-    //5. Pass new pllState back in refreshedLinkedState closure
+    /**
+     * Get the PLL Status for a given payment account.
+     *
+     * @param context: The context used for injecting the view model
+     * @param paymentAccount: A payment account from the users wallet.
+     * @param callback: Callback function that returns a an object including all linked and unlinked loyalty cards.
+     */
+    fun getPLLStatus(context: Context, paymentAccount: PaymentAccount, callback: (PaymentAccountPllState?, Exception?) -> Unit) {
+        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
+            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
+        }
+
+        val viewModel: BinkPaymentViewModel by lazy {
+            (context as ComponentActivity).getViewModel()
+        }
+
+        viewModel.checkPllState(paymentAccount, callback)
+    }
+
+
+    /**
+     * Get the PLL Status for a given loyalty card.
+     *
+     * @param context: The context used for injecting the view model
+     * @param loyaltyCard: A loyalty card from the users wallet.
+     * @param callback: Callback function that returns a an object including all linked and unlinked payment accounts.
+     */
+    fun getPLLStatus(context: Context, loyaltyCard: LoyaltyCard, callback: (LoyaltyCardPllState?, Exception?) -> Unit) {
+        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
+            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
+        }
+
+        val viewModel: BinkPaymentViewModel by lazy {
+            (context as ComponentActivity).getViewModel()
+        }
+
+        viewModel.checkPllState(loyaltyCard, callback)
+    }
 
 }

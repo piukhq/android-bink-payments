@@ -5,7 +5,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class PaymentCard(
+data class PaymentAccount(
     @Json(name = "card_nickname")
     val cardNickname: String?,
     @Json(name = "expiry_month")
@@ -17,7 +17,7 @@ data class PaymentCard(
     @Json(name = "name_on_card")
     val nameOnCard: String?,
     @Json(name = "pll_links")
-    val pllLinks: List<PaymentCardPllLink>?,
+    val pllLinks: List<PaymentAccountPllLink>?,
     @Json(name = "status")
     val status: String?,
     @Json(name = "last_four_digits")

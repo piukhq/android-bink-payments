@@ -5,9 +5,11 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class PaymentCardPllLink(
+data class PaymentAccountPllLink(
     @Json(name = "loyalty_plan")
     val loyaltyPlan: String?,
+    @Json(name = "loyalty_card_id")
+    val loyaltyCardId: Int?,
     @Json(name = "loyalty_plan_id")
     val loyaltyPlanId: Int?,
     @Json(name = "status")
