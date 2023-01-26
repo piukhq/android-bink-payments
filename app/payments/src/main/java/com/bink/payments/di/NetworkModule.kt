@@ -13,7 +13,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 val networkModule = module {
-    single(named(BINK_PAYMENTS_OKHTTP)) { provideDefaultOkHttpClient("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6ImFjY2Vzcy1zZWNyZXQtMiJ9.eyJzdWIiOjM4MjgzLCJjaGFubmVsIjoiY29tLmJpbmsud2FsbGV0IiwiaWF0IjoxNjQ2NjQ3NDY0LCJleHAiOjE2NzgxODM0NjR9.yiF0v2Ufzj4eMTCyaR-q6NiX2KUUqSTe59OkUY5mM_Rdj1SWLv5rOw8h2ixgKJ_7JpZD-14qSu37-25UTKwSbQ") }
+    single(named(BINK_PAYMENTS_OKHTTP)) { provideDefaultOkHttpClient(getProperty("userToken")) }
     single(named(BINK_PAYMENTS_RETROFIT)) { provideRetrofit(get(named(BINK_PAYMENTS_OKHTTP))) }
     single { provideApiService(get(named(BINK_PAYMENTS_RETROFIT))) }
 }
