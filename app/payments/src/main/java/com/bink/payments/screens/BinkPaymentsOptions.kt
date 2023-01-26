@@ -47,8 +47,6 @@ data class BinkPaymentsTheme(
  * @param backButtonTitle: Text displayed to the right of the back button.
  * @param backButtonIcon: Icon used to display the back button.
  * @param toolBarTitle: Title displayed in the toolbar.
- * @param toolBarColor: Colour displayed on the toolbar.
- * @param toolbarTextColor: Colour used for text in the toolbar.
  */
 @Parcelize
 data class ToolBarOptions(
@@ -98,6 +96,7 @@ enum class CheckBoxStyle {
     BOX,
     SWITCH
 }
+
 @Parcelize
 data class BinkTypography(
     /**
@@ -108,7 +107,7 @@ data class BinkTypography(
     /**
      * Fonts from the compose FontFamily
      */
-    val fontName: String = ""
+    val fontName: String = "",
 ) : Parcelable {
 
     fun fontFamily(): FontFamily {

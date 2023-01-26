@@ -89,7 +89,7 @@ class BinkPaymentsActivity : ComponentActivity() {
     @Composable
     private fun CreatePaymentCardScreen(
         paymentCardViewModel: PaymentCardViewModel,
-        paymentCardUiState: PaymentCardUiState
+        paymentCardUiState: PaymentCardUiState,
     ) {
         Column(
             modifier = Modifier
@@ -169,7 +169,7 @@ class BinkPaymentsActivity : ComponentActivity() {
     @Composable
     private fun CardDetailsInput(
         paymentCardViewModel: PaymentCardViewModel,
-        paymentCardUiState: PaymentCardUiState
+        paymentCardUiState: PaymentCardUiState,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
@@ -240,7 +240,7 @@ class BinkPaymentsActivity : ComponentActivity() {
     @Composable
     private fun ErrorDialog(
         paymentCardUiState: PaymentCardUiState,
-        paymentCardViewModel: PaymentCardViewModel
+        paymentCardViewModel: PaymentCardViewModel,
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -294,7 +294,7 @@ class BinkPaymentsActivity : ComponentActivity() {
     private fun CardDetailsInputField(
         inputType: PaymentCardInputType,
         paymentCardUiState: PaymentCardUiState,
-        callback: (String?, Boolean?) -> Unit
+        callback: (String?, Boolean?) -> Unit,
     ) {
         val uiOptions = paymentCardUiState.binkPaymentsOptions.inputFieldOptions
         val isUppercaseHints = uiOptions.upperCaseHints

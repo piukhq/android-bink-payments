@@ -62,7 +62,7 @@ object BinkPayments {
         if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
             throw RuntimeException("The Bink Payments SDK needs to be initialized first")
         }
-        
+
         val intent = Intent(context, BinkPaymentsActivity::class.java)
         binkPaymentsOptions?.let {
             intent.putExtra(BinkPaymentsActivity.binkPaymentsOptionsName, it)

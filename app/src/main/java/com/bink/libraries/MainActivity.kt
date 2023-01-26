@@ -11,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.ui.Modifier
 import com.bink.libraries.ui.theme.LibrariesTheme
 import com.bink.payments.BinkPayments
+import com.bink.payments.screens.BinkPaymentsOptions
 
 
 class MainActivity : ComponentActivity() {
@@ -29,7 +30,8 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.primary) {
                     Button(onClick = {
                         BinkPayments.startCardEntry(
-                            this
+                            this,
+                            BinkPaymentsOptions()
                         )
                     }) {
                         Text(text = "Launch Bink Payments")
