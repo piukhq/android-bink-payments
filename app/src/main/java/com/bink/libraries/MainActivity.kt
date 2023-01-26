@@ -18,6 +18,7 @@ import com.bink.payments.model.wallet.Configuration
 import com.bink.payments.model.wallet.CredentialType
 import com.bink.payments.model.wallet.UserWallet
 
+
 class MainActivity : ComponentActivity() {
 
     lateinit var userWallet: UserWallet
@@ -84,4 +85,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }
