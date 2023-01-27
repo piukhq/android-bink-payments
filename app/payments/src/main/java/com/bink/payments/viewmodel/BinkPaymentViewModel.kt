@@ -5,7 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.bink.payments.BinkLogger
 import com.bink.payments.BinkPayments
 import com.bink.payments.data.WalletRepository
-import com.bink.payments.model.wallet.*
+import com.bink.payments.model.wallet.LoyaltyCard
+import com.bink.payments.model.wallet.LoyaltyCardPllState
+import com.bink.payments.model.wallet.PaymentAccount
+import com.bink.payments.model.wallet.UserWallet
 import kotlinx.coroutines.launch
 
 class BinkPaymentViewModel(private val walletRepository: WalletRepository) : ViewModel() {
@@ -26,31 +29,14 @@ class BinkPaymentViewModel(private val walletRepository: WalletRepository) : Vie
         }
     }
 
-    fun checkPllState(paymentAccount: PaymentAccount, callback: (PaymentAccountPllState?, Exception?) -> Unit) {
-        if (userWallet != null) {
-            val linkedLoyaltyCards = arrayListOf<LoyaltyCard>()
-            val unlinkedLoyaltyCards = arrayListOf<LoyaltyCard>()
-
-            userWallet?.loyaltyCards?.let { unlinkedLoyaltyCards.addAll(it) }
-
-            paymentAccount.pllLinks?.forEach { link ->
-                userWallet?.loyaltyCards?.firstOrNull { it.id == link.loyaltyCardId }?.let { loyaltyCard ->
-                    if (link.status?.state == "active") {
-                        linkedLoyaltyCards.add(loyaltyCard)
-                        unlinkedLoyaltyCards.remove(loyaltyCard)
-                    }
-                }
+    fun checkPllState(callback: (LoyaltyCardPllState?, Exception?) -> Unit) {
+        if (userWallet == null) {
+            logger.log(currentLogType = BinkLogger.LogType.ERROR, message = "Retrieving the user wallet first.")
+            getWallet {
+                checkPllState(callback)
             }
-
-            callback(PaymentAccountPllState(linked = linkedLoyaltyCards, unlinked = unlinkedLoyaltyCards, timeChecked = System.currentTimeMillis()), null)
         } else {
-            logger.log(currentLogType = BinkLogger.LogType.ERROR, message = "Please retrieve the user wallet first.")
-            callback(null, Exception("Please retrieve the user wallet first."))
-        }
-    }
-
-    fun checkPllState(loyaltyCard: LoyaltyCard, callback: (LoyaltyCardPllState?, Exception?) -> Unit) {
-        if (userWallet != null) {
+            val loyaltyCard = userWallet!!.loyaltyCards[0] //TODO: This will be replaced once we've added trusted cards
             val linkedPaymentAccounts = arrayListOf<PaymentAccount>()
             val unlinkedPaymentAccounts = arrayListOf<PaymentAccount>()
 
@@ -67,9 +53,6 @@ class BinkPaymentViewModel(private val walletRepository: WalletRepository) : Vie
 
             callback(LoyaltyCardPllState(linked = linkedPaymentAccounts, unlinked = unlinkedPaymentAccounts, timeChecked = System.currentTimeMillis()), null)
 
-        } else {
-            logger.log(currentLogType = BinkLogger.LogType.ERROR, message = "Please retrieve the user wallet first.")
-            callback(null, Exception("Please retrieve the user wallet first."))
         }
     }
 }

@@ -96,33 +96,12 @@ object BinkPayments {
     }
 
     /**
-     * Get the PLL Status for a given payment account.
-     *
-     * @param context: The context used for injecting the view model
-     * @param paymentAccount: A payment account from the users wallet.
-     * @param callback: Callback function that returns a an object including all linked and unlinked loyalty cards.
-     */
-    fun getPLLStatus(context: Context, paymentAccount: PaymentAccount, callback: (PaymentAccountPllState?, Exception?) -> Unit) {
-        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
-            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
-        }
-
-        val viewModel: BinkPaymentViewModel by lazy {
-            (context as ComponentActivity).getViewModel()
-        }
-
-        viewModel.checkPllState(paymentAccount, callback)
-    }
-
-
-    /**
      * Get the PLL Status for a given loyalty card.
      *
      * @param context: The context used for injecting the view model
-     * @param loyaltyCard: A loyalty card from the users wallet.
      * @param callback: Callback function that returns a an object including all linked and unlinked payment accounts.
      */
-    fun getPLLStatus(context: Context, loyaltyCard: LoyaltyCard, callback: (LoyaltyCardPllState?, Exception?) -> Unit) {
+    fun getPLLStatus(context: Context, callback: (LoyaltyCardPllState?, Exception?) -> Unit) {
         if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
             throw RuntimeException("The Bink Payments SDK needs to be initialized first")
         }
@@ -131,7 +110,7 @@ object BinkPayments {
             (context as ComponentActivity).getViewModel()
         }
 
-        viewModel.checkPllState(loyaltyCard, callback)
+        viewModel.checkPllState(callback)
     }
 
 }
