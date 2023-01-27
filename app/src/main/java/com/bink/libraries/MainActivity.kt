@@ -69,8 +69,8 @@ class MainActivity : ComponentActivity() {
                                 .width(200.dp)
                                 .height(100.dp),
                             onClick = {
-                                BinkPayments.getPLLStatus(this@MainActivity, userWallet.paymentAccounts[0]) { pllState, exception ->
-                                    if (exception != null) {
+                                BinkPayments.getPLLStatus(this@MainActivity) { pllState, exception ->
+                                    if(exception != null){
                                         Toast.makeText(this@MainActivity, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
                                     } else {
                                         Toast.makeText(this@MainActivity, "Linked cards ${pllState?.linked?.size}, Unlinked Cards ${pllState?.unlinked?.size}", Toast.LENGTH_SHORT).show()
