@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.bink.payments.BinkLogger
 import com.bink.payments.BinkPayments
 import com.bink.payments.data.WalletRepository
-import com.bink.payments.model.wallet.LoyaltyCard
+import com.bink.payments.model.trustedcards.*
 import com.bink.payments.model.wallet.LoyaltyCardPllState
 import com.bink.payments.model.wallet.PaymentAccount
 import com.bink.payments.model.wallet.UserWallet
@@ -53,6 +53,57 @@ class BinkPaymentViewModel(private val walletRepository: WalletRepository) : Vie
 
             callback(LoyaltyCardPllState(linked = linkedPaymentAccounts, unlinked = unlinkedPaymentAccounts, timeChecked = System.currentTimeMillis()), null)
 
+        }
+    }
+
+    fun setTrustedLoyaltyCard(loyaltyPlanId: Int, loyaltyIdentity: String, email: String, callback: (Exception?) -> Unit) {
+        val account = Account(
+            authoriseFields = AuthoriseFields(listOf(Credential(
+                credentialSlug = "email",
+                value = email
+            ))),
+            merchantFields = MerchantFields(accountId = loyaltyIdentity)
+        )
+
+        val trustedCardAdd = TrustedCardAdd(
+            account = account,
+            loyaltyPlanId = loyaltyPlanId
+        )
+
+        viewModelScope.launch {
+            try {
+                walletRepository.addTrustedLoyaltyCard(trustedCardAdd)
+                logger.log(currentLogType = BinkLogger.LogType.VERBOSE, message = "Added trusted card for $email")
+                callback(null)
+            } catch (e: Exception) {
+                logger.log(currentLogType = BinkLogger.LogType.ERROR, message = "${e.message}")
+                callback(e)
+            }
+        }
+    }
+
+    fun replaceTrustedLoyaltyCard(loyaltyCardId: Int, loyaltyIdentity: String, email: String, callback: (Exception?) -> Unit) {
+        val account = Account(
+            authoriseFields = AuthoriseFields(listOf(Credential(
+                credentialSlug = "email",
+                value = email
+            ))),
+            merchantFields = MerchantFields(accountId = loyaltyIdentity)
+        )
+
+        val trustedCardReplace = TrustedCardReplace(
+            account = account
+        )
+
+        viewModelScope.launch {
+            try {
+                walletRepository.replaceTrustedLoyaltyCard(loyaltyCardId.toString(), trustedCardReplace)
+                logger.log(currentLogType = BinkLogger.LogType.VERBOSE, message = "Replaced trusted card for $email")
+                callback(null)
+            } catch (e: Exception) {
+                logger.log(currentLogType = BinkLogger.LogType.ERROR, message = "${e.message}")
+                callback(e)
+            }
         }
     }
 }

@@ -17,10 +17,10 @@ interface ApiService {
     @POST("loyalty_cards/add_trusted")
     suspend fun addTrustedLoyaltyCard(@Body trustedCardAdd: TrustedCardAdd): ResponseBody
 
-    @PUT("loyalty_cards/(card_id)/add_trusted")
-    suspend fun updateTrustedLoyaltyCard(
-        @Path("card_id") cardId: String,
+    @PUT("loyalty_cards/{id}/add_trusted")
+    suspend fun replaceTrustedLoyaltyCard(
+        @Path("id") id: String,
         @Body trustedCardReplace: TrustedCardReplace,
-    ): ResponseBody 
+    ): ResponseBody
 }
 

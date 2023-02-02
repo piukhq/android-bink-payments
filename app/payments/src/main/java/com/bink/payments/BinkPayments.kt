@@ -6,7 +6,9 @@ import androidx.activity.ComponentActivity
 import com.bink.payments.di.networkModule
 import com.bink.payments.di.spreedlyModule
 import com.bink.payments.di.viewModelModule
-import com.bink.payments.model.wallet.*
+import com.bink.payments.model.wallet.Configuration
+import com.bink.payments.model.wallet.LoyaltyCardPllState
+import com.bink.payments.model.wallet.UserWallet
 import com.bink.payments.screens.BinkPaymentsActivity
 import com.bink.payments.screens.BinkPaymentsOptions
 import com.bink.payments.viewmodel.BinkPaymentViewModel
@@ -116,5 +118,47 @@ object BinkPayments {
 
         viewModel.checkPllState(callback)
     }
+
+    /**
+     * Add a loyalty card through a trusted channel
+     *
+     * @param context: The context used for injecting the view model
+     * @param loyaltyIdentity: The unique resource identifier for the Loyalty Plan to which the Loyalty Card belongs.
+     * @param email: The email associated with the loyalty account
+     * @param callback: Callback function that returns an exception if there is an error, or null if its successful.
+     */
+    fun setTrustedLoyaltyCard(context: Context, loyaltyIdentity: String, email: String, callback: (Exception?) -> Unit) {
+        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
+            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
+        }
+
+        val viewModel: BinkPaymentViewModel by lazy {
+            (context as ComponentActivity).getViewModel()
+        }
+
+        viewModel.setTrustedLoyaltyCard(286, loyaltyIdentity, email, callback)
+    }
+
+
+    /**
+     * Replace a loyalty card through a trusted channel
+     *
+     * @param context: The context used for injecting the view model
+     * @param loyaltyCardId: The unique indentifier of the loyalty card you're trying to replace
+     * @param email: The email associated with the loyalty account
+     * @param callback: Callback function that returns an exception if there is an error, or null if its successful.
+     */
+    fun replaceTrustedLoyaltyCard(context: Context, loyaltyCardId: Int, loyaltyIdentity: String, email: String, callback: (Exception?) -> Unit) {
+        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
+            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
+        }
+
+        val viewModel: BinkPaymentViewModel by lazy {
+            (context as ComponentActivity).getViewModel()
+        }
+
+        viewModel.replaceTrustedLoyaltyCard(loyaltyCardId, loyaltyIdentity, email, callback)
+    }
+
 
 }

@@ -9,5 +9,5 @@ data class Credential(
     @Json(name = "credential_slug")
     val credentialSlug: String,
     @Json(name = "value")
-    val value: String
+    val value: String,
 )

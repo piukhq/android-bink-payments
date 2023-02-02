@@ -27,11 +27,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         BinkPayments.init(
-            userToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6ImFjY2Vzcy1zZWNyZXQtMiJ9.eyJzdWIiOjM4MjgzLCJjaGFubmVsIjoiY29tLmJpbmsud2FsbGV0IiwiaWF0IjoxNjUxMTUyOTU5LCJleHAiOjE2ODI2ODg5NTl9.mvcKT3eALLCOENFIWl39Zo6t5Jux8RVuMH0-nawnjNPjv5tGALlpM6-gNcPtdXEB6_ZL_uJAmaJZNT4h1V-yYw",
+            userToken = "eyJhbGciOiJIUzUxMiIsImtpZCI6ImFjY2Vzcy1zZWNyZXQtMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEyNDc1MywiY2hhbm5lbCI6ImNvbS50cnVzdGVkLmJpbmsud2FsbGV0IiwiaXNfdGVzdGVyIjpmYWxzZSwiaXNfdHJ1c3RlZF9jaGFubmVsIjp0cnVlLCJpYXQiOjE2NzUzMzY2MjQsImV4cCI6MTY3NTMzODQyNH0.bx0eVbrfROHIiXtqURSyTfC6v7eS4jHcxuPAHeLN9gwWIOf2tp-esBwy2X28rbvW-iv5sFAcmHLGsl90iyRGKQ",
             spreedlyEnvironmentKey = "1Lf7DiKgkcx5Anw7QxWdDxaKtTa",
             configuration = Configuration(0, 0, CredentialType.ADD),
             isDebug = true)
-
 
         setContent {
             LibrariesTheme {
@@ -70,7 +69,7 @@ class MainActivity : ComponentActivity() {
                                 .height(100.dp),
                             onClick = {
                                 BinkPayments.getPLLStatus(this@MainActivity) { pllState, exception ->
-                                    if(exception != null){
+                                    if (exception != null) {
                                         Toast.makeText(this@MainActivity, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
                                     } else {
                                         Toast.makeText(this@MainActivity, "Linked cards ${pllState?.linked?.size}, Unlinked Cards ${pllState?.unlinked?.size}", Toast.LENGTH_SHORT).show()
@@ -78,6 +77,24 @@ class MainActivity : ComponentActivity() {
                                 }
                             }) {
                             Text(text = "Get PLL Status")
+                        }
+
+                        Spacer(modifier = Modifier.size(10.dp))
+
+                        Button(
+                            modifier = Modifier
+                                .width(200.dp)
+                                .height(100.dp),
+                            onClick = {
+                                BinkPayments.setTrustedLoyaltyCard(this@MainActivity, "Z99783494A", "jbest@bink.com") { exception ->
+                                    if (exception != null) {
+                                        Toast.makeText(this@MainActivity, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(this@MainActivity, "Set trusted card", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }) {
+                            Text(text = "Add Trusted Card")
                         }
                     }
 

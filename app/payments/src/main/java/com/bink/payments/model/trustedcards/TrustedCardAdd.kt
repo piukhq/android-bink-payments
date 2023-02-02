@@ -9,5 +9,5 @@ data class TrustedCardAdd(
     @Json(name = "account")
     val account: Account,
     @Json(name = "loyalty_plan_id")
-    val loyaltyPlanId: Int
+    val loyaltyPlanId: Int,
 )
