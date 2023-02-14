@@ -1,7 +1,7 @@
 package com.bink.payments.model.wallet
 
 data class LoyaltyCardPllState(
-    val linked: ArrayList<PaymentAccount>,
-    val unlinked: ArrayList<PaymentAccount>,
+    val linked: List<PaymentAccount>,
+    val unlinked: List<PaymentAccount>,
     val timeChecked: Long,
 )

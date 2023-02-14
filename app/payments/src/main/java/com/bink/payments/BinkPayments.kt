@@ -63,9 +63,7 @@ object BinkPayments {
      * @param binkPaymentsOptions: Custom UI options.
      */
     fun startCardEntry(context: Context, binkPaymentsOptions: BinkPaymentsOptions? = null) {
-        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
-            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
-        }
+        isBinkInitialized()
 
         val intent = Intent(context, BinkPaymentsActivity::class.java)
         binkPaymentsOptions?.let {
@@ -84,9 +82,7 @@ object BinkPayments {
      * @param callback: Callback function that returns the user wallet retrieved with the current user token.
      */
     fun getWallet(context: Context, callback: (UserWallet) -> Unit) {
-        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
-            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
-        }
+        isBinkInitialized()
 
         val viewModel: BinkPaymentViewModel by lazy {
             (context as ComponentActivity).getViewModel()
@@ -102,15 +98,19 @@ object BinkPayments {
      * @param callback: Callback function that returns a an object including all linked and unlinked payment accounts.
      */
     fun getPLLStatus(context: Context, callback: (LoyaltyCardPllState?, Exception?) -> Unit) {
-        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
-            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
-        }
+        isBinkInitialized()
 
         val viewModel: BinkPaymentViewModel by lazy {
             (context as ComponentActivity).getViewModel()
         }
 
         viewModel.checkPllState(callback)
+    }
+
+    private fun isBinkInitialized(){
+        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
+            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
+        }
     }
 
 }
