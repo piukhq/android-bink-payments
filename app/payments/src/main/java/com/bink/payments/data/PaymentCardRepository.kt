@@ -1,6 +1,6 @@
 package com.bink.payments.data
 
-import com.bink.payments.model.PaymentAccount
+import com.bink.payments.model.PaymentAccountCreate
 import com.bink.payments.model.SpreedlyPaymentCard
 import com.bink.payments.model.SpreedlyResponse
 import okhttp3.ResponseBody
@@ -10,7 +10,7 @@ class PaymentCardRepository(
     private val spreedlyService: SpreedlyService,
 ) {
 
-    suspend fun addPaymentCard(paymentAccount: PaymentAccount): ResponseBody {
+    suspend fun addPaymentCard(paymentAccount: PaymentAccountCreate): ResponseBody {
         return apiService.addPaymentCard(paymentAccount)
     }
 

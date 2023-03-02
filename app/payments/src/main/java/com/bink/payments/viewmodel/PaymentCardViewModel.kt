@@ -7,7 +7,7 @@ import com.bink.core.PaymentCardType
 import com.bink.payments.BinkLogger
 import com.bink.payments.BinkPayments
 import com.bink.payments.data.PaymentCardRepository
-import com.bink.payments.model.PaymentAccount
+import com.bink.payments.model.PaymentAccountCreate
 import com.bink.payments.model.SpreedlyCreditCard
 import com.bink.payments.model.SpreedlyPaymentCard
 import com.bink.payments.model.SpreedlyPaymentMethod
@@ -136,7 +136,7 @@ class PaymentCardViewModel(private val addPaymentCardRepository: PaymentCardRepo
         }
     }
 
-    private fun getPaymentAccount(): PaymentAccount? {
+    private fun getPaymentAccount(): PaymentAccountCreate? {
         var hasError = false
 
         if (PaymentAccountUtil.cardValidation(uiState.value.cardNumber) == PaymentCardType.NONE) {
@@ -177,12 +177,12 @@ class PaymentCardViewModel(private val addPaymentCardRepository: PaymentCardRepo
         val nameOnCard = uiState.value.nameOnCard
         val cardExpiry = uiState.value.cardExpiry.split("/")
 
-        return PaymentAccount(
+        return PaymentAccountCreate(
             country = "GB",
             currencyCode = "GBP",
             expiryMonth = cardExpiry[0],
             expiryYear = (cardExpiry[1].toInt() + EXPIRY_YEAR).toString(),
-            fingerprint = PaymentAccount.fingerprintGenerator(
+            fingerprint = PaymentAccountCreate.fingerprintGenerator(
                 cardNumber,
                 cardExpiry[0],
                 cardExpiry[1]
@@ -190,7 +190,7 @@ class PaymentCardViewModel(private val addPaymentCardRepository: PaymentCardRepo
             firstSixDigits = cardNumber.substring(0, 6),
             lastFourDigits = cardNumber.substring(cardNumber.length - 4),
             nameOnCard = nameOnCard,
-            token = PaymentAccount.tokenGenerator()
+            token = PaymentAccountCreate.tokenGenerator()
         )
     }
 

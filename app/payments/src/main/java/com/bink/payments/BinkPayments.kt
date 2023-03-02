@@ -2,11 +2,15 @@ package com.bink.payments
 
 import android.content.Context
 import android.content.Intent
+import androidx.activity.ComponentActivity
 import com.bink.payments.di.networkModule
 import com.bink.payments.di.spreedlyModule
 import com.bink.payments.di.viewModelModule
+import com.bink.payments.model.wallet.*
 import com.bink.payments.screens.BinkPaymentsActivity
 import com.bink.payments.screens.BinkPaymentsOptions
+import com.bink.payments.viewmodel.BinkPaymentViewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.context.startKoin
 import kotlin.properties.Delegates
 
@@ -59,17 +63,54 @@ object BinkPayments {
      * @param binkPaymentsOptions: Custom UI options.
      */
     fun startCardEntry(context: Context, binkPaymentsOptions: BinkPaymentsOptions? = null) {
-        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
-            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
-        }
+        isBinkInitialized()
 
         val intent = Intent(context, BinkPaymentsActivity::class.java)
         binkPaymentsOptions?.let {
             intent.putExtra(BinkPaymentsActivity.binkPaymentsOptionsName, it)
-            intent.putExtra(BinkPaymentsActivity.spreedlyEnvKey, spreedlyEnvironmentKey)
         }
-        context.startActivity(intent)
 
+        intent.putExtra(BinkPaymentsActivity.spreedlyEnvKey, spreedlyEnvironmentKey)
+
+        context.startActivity(intent)
+    }
+
+    /**
+     * Retrieve the user wallet.
+     *
+     * @param context: The context used for injecting the view model
+     * @param callback: Callback function that returns the user wallet retrieved with the current user token.
+     */
+    fun getWallet(context: Context, callback: (UserWallet) -> Unit) {
+        isBinkInitialized()
+
+        val viewModel: BinkPaymentViewModel by lazy {
+            (context as ComponentActivity).getViewModel()
+        }
+
+        viewModel.getWallet(callback)
+    }
+
+    /**
+     * Get the PLL Status for a given loyalty card.
+     *
+     * @param context: The context used for injecting the view model
+     * @param callback: Callback function that returns a an object including all linked and unlinked payment accounts.
+     */
+    fun getPLLStatus(context: Context, callback: (LoyaltyCardPllState?, Exception?) -> Unit) {
+        isBinkInitialized()
+
+        val viewModel: BinkPaymentViewModel by lazy {
+            (context as ComponentActivity).getViewModel()
+        }
+
+        viewModel.checkPllState(callback)
+    }
+
+    private fun isBinkInitialized(){
+        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
+            throw RuntimeException("The Bink Payments SDK needs to be initialized first")
+        }
     }
 
 }

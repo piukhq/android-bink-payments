@@ -7,7 +7,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class PaymentAccount(
+data class PaymentAccountCreate(
     @Json(name = "country")
     val country: String,
     @Json(name = "currency_code")
