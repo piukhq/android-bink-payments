@@ -8,8 +8,8 @@ package com.bink.payments.model.wallet
  * @param credentialType: This will change whether the card will be POST or PUT.
  */
 data class Configuration(
-    val productionLoyaltyPlanId: Int,
-    val devLoyaltyPlanId: Int,
+    val productionLoyaltyPlanId: String,
+    val devLoyaltyPlanId: String,
     val credentialType: CredentialType,
 )
 
