@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "50034705821",
+    "project_id": "bink-payments",
+    "storage_bucket": "bink-payments.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:50034705821:android:6c7dc1958d2ce68dd85b74",
+        "android_client_info": {
+          "package_name": "com.bink.libraries"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "50034705821-n2vrrjdmfadorceen8g5bdg9btl58kg9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzoOEDDJbWHbe4cxFuNLcWYAo2dMhUovc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "50034705821-n2vrrjdmfadorceen8g5bdg9btl58kg9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

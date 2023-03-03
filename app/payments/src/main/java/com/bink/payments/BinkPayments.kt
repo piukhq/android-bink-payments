@@ -12,6 +12,7 @@ import com.bink.payments.model.wallet.UserWallet
 import com.bink.payments.screens.BinkPaymentsActivity
 import com.bink.payments.screens.BinkPaymentsOptions
 import com.bink.payments.viewmodel.BinkPaymentViewModel
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.context.startKoin
 import kotlin.properties.Delegates
@@ -38,7 +39,7 @@ object BinkPayments {
      * @param configuration: Configuration object for the BInk API.
      * @param isDebug: If true, enable debug logging.
      */
-    fun init(userToken: String, spreedlyEnvironmentKey: String, configuration: Configuration, isDebug: Boolean) {
+    fun init(context: Context, userToken: String, spreedlyEnvironmentKey: String, configuration: Configuration, isDebug: Boolean) {
         if (userToken.isBlank()) throw NullPointerException("User token must not be null or blank")
         if (spreedlyEnvironmentKey.isBlank()) throw NullPointerException("Spreedly Environment Key must not be null or blank")
         if (this::userToken.isInitialized && this::spreedlyEnvironmentKey.isInitialized && this::configuration.isInitialized) {
@@ -57,6 +58,8 @@ object BinkPayments {
 
             startKoin {
                 koin.setProperty("userToken", userToken)
+                koin.setProperty("isDebug", isDebug)
+                androidContext(context)
                 modules(networkModule, spreedlyModule, viewModelModule)
             }
         }
@@ -145,6 +148,7 @@ object BinkPayments {
      *
      * @param context: The context used for injecting the view model
      * @param loyaltyCardId: The unique indentifier of the loyalty card you're trying to replace
+     * @param loyaltyIdentity: The unique resource identifier for the Loyalty Plan to which the Loyalty Card belongs.
      * @param email: The email associated with the loyalty account
      * @param callback: Callback function that returns an exception if there is an error, or null if its successful.
      */
