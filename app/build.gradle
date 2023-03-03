@@ -22,7 +22,7 @@ android {
         }
     }
     signingConfigs {
-        release {
+        config {
             storeFile file("testappkeystore.keystore")
             storePassword "T35Tapp!@"
             keyAlias "BinkTestApp"
@@ -32,7 +32,12 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.config
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
