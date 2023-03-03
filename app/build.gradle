@@ -21,7 +21,14 @@ android {
             useSupportLibrary true
         }
     }
-
+    signingConfigs {
+        release {
+            storeFile file("testappkeystore.keystore")
+            storePassword "T35Tapp!@"
+            keyAlias "BinkTestApp"
+            keyPassword "T35Tapp!@"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
