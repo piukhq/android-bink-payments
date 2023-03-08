@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
 
         BinkPayments.init(
             context = this,
-            userToken = "eyJhbGciOiJIUzUxMiIsImtpZCI6ImFjY2Vzcy1zZWNyZXQtMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEyNDc1MywiY2hhbm5lbCI6ImNvbS50cnVzdGVkLmJpbmsud2FsbGV0IiwiaXNfdGVzdGVyIjpmYWxzZSwiaXNfdHJ1c3RlZF9jaGFubmVsIjp0cnVlLCJpYXQiOjE2NzUzMzY2MjQsImV4cCI6MTY3NTMzODQyNH0.bx0eVbrfROHIiXtqURSyTfC6v7eS4jHcxuPAHeLN9gwWIOf2tp-esBwy2X28rbvW-iv5sFAcmHLGsl90iyRGKQ",
+            refreshToken = "eyJhbGciOiJIUzUxMiIsImtpZCI6ImFjY2Vzcy1zZWNyZXQtMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEyNDc1MywiY2hhbm5lbCI6ImNvbS50cnVzdGVkLmJpbmsud2FsbGV0IiwiaXNfdGVzdGVyIjpmYWxzZSwiaXNfdHJ1c3RlZF9jaGFubmVsIjp0cnVlLCJpYXQiOjE2NzUzMzY2MjQsImV4cCI6MTY3NTMzODQyNH0.bx0eVbrfROHIiXtqURSyTfC6v7eS4jHcxuPAHeLN9gwWIOf2tp-esBwy2X28rbvW-iv5sFAcmHLGsl90iyRGKQ",
             spreedlyEnvironmentKey = "1Lf7DiKgkcx5Anw7QxWdDxaKtTa",
             configuration = Configuration(0, 0, CredentialType.ADD),
             isDebug = true)

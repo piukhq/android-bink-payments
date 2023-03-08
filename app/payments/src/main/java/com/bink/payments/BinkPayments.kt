@@ -20,7 +20,7 @@ import kotlin.properties.Delegates
 object BinkPayments {
 
     private lateinit var configuration: Configuration
-    private lateinit var userToken: String
+    private lateinit var refreshToken: String
     private lateinit var spreedlyEnvironmentKey: String
     private var isDebug by Delegates.notNull<Boolean>()
 
@@ -31,33 +31,38 @@ object BinkPayments {
         return binkLogger
     }
 
+    fun getRefreshToken(): String {
+        if (!this::refreshToken.isInitialized) throw NullPointerException("The Bink Payments SDK needs to be initialized first")
+        return refreshToken
+    }
+
     /**
      * Initialize the Bink Payments library.
      *
-     * @param userToken: The token required to use the Bink API.
+     * @param refreshToken: The token required to use the Bink API.
      * @param spreedlyEnvironmentKey: The key required to use the Spreedly API.
      * @param configuration: Configuration object for the BInk API.
      * @param isDebug: If true, enable debug logging.
      */
-    fun init(context: Context, userToken: String, spreedlyEnvironmentKey: String, configuration: Configuration, isDebug: Boolean) {
-        if (userToken.isBlank()) throw NullPointerException("User token must not be null or blank")
+    fun init(context: Context, refreshToken: String, spreedlyEnvironmentKey: String, configuration: Configuration, isDebug: Boolean) {
+        if (refreshToken.isBlank()) throw NullPointerException("User token must not be null or blank")
         if (spreedlyEnvironmentKey.isBlank()) throw NullPointerException("Spreedly Environment Key must not be null or blank")
-        if (this::userToken.isInitialized && this::spreedlyEnvironmentKey.isInitialized && this::configuration.isInitialized) {
-            this.binkLogger.log(BinkLogger.LogType.ERROR, "Bink Payments SDK has already been initialized with User Token:${this.userToken} and Spreedly Environment Key:${this.spreedlyEnvironmentKey}")
+        if (this::refreshToken.isInitialized && this::spreedlyEnvironmentKey.isInitialized && this::configuration.isInitialized) {
+            this.binkLogger.log(BinkLogger.LogType.ERROR, "Bink Payments SDK has already been initialized with User Token:${this.refreshToken} and Spreedly Environment Key:${this.spreedlyEnvironmentKey}")
         } else {
-            this.userToken = userToken
+            this.refreshToken = refreshToken
             this.spreedlyEnvironmentKey = spreedlyEnvironmentKey
             this.configuration = configuration
             this.isDebug = isDebug
             this.binkLogger = BinkLogger(if (isDebug) BinkLogger.LogType.DEBUG else BinkLogger.LogType.VERBOSE)
 
             this.binkLogger.log(BinkLogger.LogType.VERBOSE, "Bink Payments SDK Initialised")
-            this.binkLogger.log(BinkLogger.LogType.DEBUG, "User token set to $userToken")
+            this.binkLogger.log(BinkLogger.LogType.DEBUG, "Refresh token set to $refreshToken")
             this.binkLogger.log(BinkLogger.LogType.DEBUG, "Spreedly Environment Token set to $spreedlyEnvironmentKey")
             this.binkLogger.log(BinkLogger.LogType.DEBUG, "Loyalty Plan ids: ${configuration.productionLoyaltyPlanId} & ${configuration.devLoyaltyPlanId}")
 
             startKoin {
-                koin.setProperty("userToken", userToken)
+                koin.setProperty("refreshToken", refreshToken)
                 koin.setProperty("isDebug", isDebug)
                 androidContext(context)
                 modules(networkModule, spreedlyModule, viewModelModule)
@@ -72,7 +77,7 @@ object BinkPayments {
      * @param binkPaymentsOptions: Custom UI options.
      */
     fun startCardEntry(context: Context, binkPaymentsOptions: BinkPaymentsOptions? = null) {
-        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
+        if (!this::refreshToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
             throw RuntimeException("The Bink Payments SDK needs to be initialized first")
         }
 
@@ -93,7 +98,7 @@ object BinkPayments {
      * @param callback: Callback function that returns the user wallet retrieved with the current user token.
      */
     fun getWallet(context: Context, callback: (UserWallet) -> Unit) {
-        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
+        if (!this::refreshToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
             throw RuntimeException("The Bink Payments SDK needs to be initialized first")
         }
 
@@ -111,7 +116,7 @@ object BinkPayments {
      * @param callback: Callback function that returns a an object including all linked and unlinked payment accounts.
      */
     fun getPLLStatus(context: Context, callback: (LoyaltyCardPllState?, Exception?) -> Unit) {
-        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
+        if (!this::refreshToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
             throw RuntimeException("The Bink Payments SDK needs to be initialized first")
         }
 
@@ -131,7 +136,7 @@ object BinkPayments {
      * @param callback: Callback function that returns an exception if there is an error, or null if its successful.
      */
     fun setTrustedLoyaltyCard(context: Context, loyaltyIdentity: String, email: String, callback: (Exception?) -> Unit) {
-        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
+        if (!this::refreshToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
             throw RuntimeException("The Bink Payments SDK needs to be initialized first")
         }
 
@@ -153,7 +158,7 @@ object BinkPayments {
      * @param callback: Callback function that returns an exception if there is an error, or null if its successful.
      */
     fun replaceTrustedLoyaltyCard(context: Context, loyaltyCardId: Int, loyaltyIdentity: String, email: String, callback: (Exception?) -> Unit) {
-        if (!this::userToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
+        if (!this::refreshToken.isInitialized || !this::spreedlyEnvironmentKey.isInitialized) {
             throw RuntimeException("The Bink Payments SDK needs to be initialized first")
         }
 
