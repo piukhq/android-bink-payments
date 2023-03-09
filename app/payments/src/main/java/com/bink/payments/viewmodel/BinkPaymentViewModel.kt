@@ -1,5 +1,6 @@
 package com.bink.payments.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bink.payments.BinkLogger
@@ -57,6 +58,7 @@ class BinkPaymentViewModel(private val walletRepository: WalletRepository) : Vie
     }
 
     fun setTrustedLoyaltyCard(loyaltyPlanId: Int, loyaltyIdentity: String, email: String, callback: (Exception?) -> Unit) {
+        Log.d("From viewModel", "Attempting to set trusted loyalty card")
         val account = Account(
             authoriseFields = AuthoriseFields(listOf(Credential(
                 credentialSlug = "email",

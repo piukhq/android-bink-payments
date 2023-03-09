@@ -18,7 +18,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 val networkModule = module {
-    single(named(BINK_PAYMENTS_OKHTTP)) { provideDefaultOkHttpClient(androidContext(), getProperty("isDebug")) }
+    single(named(BINK_PAYMENTS_OKHTTP)) {
+        provideDefaultOkHttpClient(
+            androidContext(),
+            getProperty("isDebug")
+        )
+    }
     single(named(BINK_PAYMENTS_RETROFIT)) { provideRetrofit(get(named(BINK_PAYMENTS_OKHTTP))) }
     single { provideApiService(get(named(BINK_PAYMENTS_RETROFIT))) }
 }
@@ -62,7 +67,7 @@ private fun getAuthBearer(request: HttpUrl): String {
     } else {
         //Any other call
         Log.d("Interceptor Log", "return $accessToken")
-        "Bearer $accessToken"
+        "$accessToken"
     }
 }
 
@@ -88,18 +93,43 @@ fun provideRetrofit(client: OkHttpClient): Retrofit {
 fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
 
 class TokenAuthenticator : Authenticator {
-    override fun authenticate(route: Route?, response: Response): Request {
-        Log.d("Interceptor Log", "Hit re-authenticator")
-        return response.request.newBuilder()
-            .header("Content-Type", "application/json")
-            .header("Authorization", getNewToken())
-            .build();
+
+    override fun authenticate(route: Route?, response: Response): Request? {
+        Log.d("Interceptor Log", "Challenge size is ${response.challenges().size}")
+
+        for (challenge in response.challenges()){
+            Log.d("Interceptor Log", "Challenge is $challenge")
+            if (challenge.equals("OkHttp-Preemptive")){
+                Log.d("Interceptor Log", "Preemtive challenge")
+
+            }
+        }
+
+        return when {
+            response.retryCount > 1 -> null
+            else -> response.request.newBuilder()
+                .header("Content-Type", "application/json")
+                .header("Authorization", getNewToken())
+                .build();
+        }
     }
 
     private fun getNewToken(): String {
         Log.d("Interceptor Log", "Set new token")
-        val newToken = "Bearer eyJhbGciOiJIUzUxMiIsImtpZCI6ImFjY2Vzcy1zZWNyZXQtMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEyNDc1MywiY2hhbm5lbCI6ImNvbS50cnVzdGVkLmJpbmsud2FsbGV0IiwiaXNfdGVzdGVyIjpmYWxzZSwiaXNfdHJ1c3RlZF9jaGFubmVsIjp0cnVlLCJpYXQiOjE2NzgyOTIxMTMsImV4cCI6MTY3ODI5MzkxM30.bQ-7KfRJ-YDapAXQCvnnzdyVlbt6foV-Dc1o7F2NCTeD9Ff5ZT6R5-BDB-H6E81zvWR8T1JUFPBy7pugcwzJ2g"
+        val newToken =
+            "Bearer eyJhbGciOiJIUzUxMiIsImtpZCI6ImFjY2Vzcy1zZWNyZXQtMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEyNDc1MywiY2hhbm5lbCI6ImNvbS50cnVzdGVkLmJpbmsud2FsbGV0IiwiaXNfdGVzdGVyIjpmYWxzZSwiaXNfdHJ1c3RlZF9jaGFubmVsIjp0cnVlLCJpYXQiOjE2NzgyOTIxMTMsImV4cCI6MTY3ODI5MzkxM30.bQ-7KfRJ-YDapAXQCvnnzdyVlbt6foV-Dc1o7F2NCTeD9Ff5ZT6R5-BDB-H6E81zvWR8T1JUFPBy7pugcwzJ2g"
         accessToken = newToken
         return newToken
     }
+
+    private val Response.retryCount: Int
+        get() {
+            var currentResponse = priorResponse
+            var result = 0
+            while (currentResponse != null) {
+                result++
+                currentResponse = currentResponse.priorResponse
+            }
+            return result
+        }
 }
