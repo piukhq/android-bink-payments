@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.bink.payments.BinkPayments
 import com.bink.payments.data.ApiService
 import com.bink.payments.utils.BASE_URL
+import com.bink.payments.utils.BINK_PAYMENTS_AUTHENTICATOR
 import com.bink.payments.utils.BINK_PAYMENTS_OKHTTP
 import com.bink.payments.utils.BINK_PAYMENTS_RETROFIT
 import okhttp3.*
@@ -18,20 +19,27 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 val networkModule = module {
+    single(named(BINK_PAYMENTS_AUTHENTICATOR)) {
+        provideTokenAuthenticator()
+    }
     single(named(BINK_PAYMENTS_OKHTTP)) {
         provideDefaultOkHttpClient(
+            get(named(BINK_PAYMENTS_AUTHENTICATOR)),
             androidContext(),
             getProperty("isDebug")
         )
     }
-    single(named(BINK_PAYMENTS_RETROFIT)) { provideRetrofit(get(named(BINK_PAYMENTS_OKHTTP))) }
-    single { provideApiService(get(named(BINK_PAYMENTS_RETROFIT))) }
+    single(named(BINK_PAYMENTS_RETROFIT)) {
+        provideRetrofit(get(named(BINK_PAYMENTS_OKHTTP)))
+    }
+    single {
+        provideApiService(get(named(BINK_PAYMENTS_RETROFIT)))
+    }
 }
 
-private var accessToken: String? = null
+private var accessToken: String? = "Bearer"
 
-fun provideDefaultOkHttpClient(context: Context, isDebug: Boolean): OkHttpClient {
-    val tokenAuthenticator = TokenAuthenticator()
+fun provideDefaultOkHttpClient(tokenAuthenticator: Authenticator, context: Context, isDebug: Boolean): OkHttpClient {
     val interceptor = HttpLoggingInterceptor()
     interceptor.level = HttpLoggingInterceptor.Level.BODY
 
@@ -74,6 +82,8 @@ private fun getAuthBearer(request: HttpUrl): String {
 private fun checkInterception(context: Context, isDebug: Boolean, response: Response) {
     val responseCode = response.code
     Log.d("Interceptor Log", "Check interception, code: $responseCode")
+    Log.d("Interceptor Log", "...")
+    Log.d("Interceptor Log", "...")
     if (isDebug) {
         Looper.prepare()
         Toast.makeText(context.applicationContext, "$responseCode", Toast.LENGTH_SHORT).show()
@@ -92,44 +102,44 @@ fun provideRetrofit(client: OkHttpClient): Retrofit {
 
 fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
 
-class TokenAuthenticator : Authenticator {
+fun provideTokenAuthenticator(): Authenticator = Authenticator { route, response ->
+    Log.d("Interceptor Log", "Challenge size is ${response.challenges().size}")
 
-    override fun authenticate(route: Route?, response: Response): Request? {
-        Log.d("Interceptor Log", "Challenge size is ${response.challenges().size}")
+    for (challenge in response.challenges()) {
+        Log.d("Interceptor Log", "Challenge is $challenge")
+        if (challenge.equals("OkHttp-Preemptive")) {
+            Log.d("Interceptor Log", "Preemtive challenge")
 
-        for (challenge in response.challenges()){
-            Log.d("Interceptor Log", "Challenge is $challenge")
-            if (challenge.equals("OkHttp-Preemptive")){
-                Log.d("Interceptor Log", "Preemtive challenge")
-
-            }
         }
+    }
 
-        return when {
-            response.retryCount > 1 -> null
-            else -> response.request.newBuilder()
+    Log.d("Interceptor Log", "Current response code is ${response.code}")
+    return@Authenticator when {
+        response.retryCount > 1 -> null
+        else -> {
+            response.request.newBuilder()
                 .header("Content-Type", "application/json")
                 .header("Authorization", getNewToken())
-                .build();
-        }
+                .build()
+        };
     }
-
-    private fun getNewToken(): String {
-        Log.d("Interceptor Log", "Set new token")
-        val newToken =
-            "Bearer eyJhbGciOiJIUzUxMiIsImtpZCI6ImFjY2Vzcy1zZWNyZXQtMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEyNDc1MywiY2hhbm5lbCI6ImNvbS50cnVzdGVkLmJpbmsud2FsbGV0IiwiaXNfdGVzdGVyIjpmYWxzZSwiaXNfdHJ1c3RlZF9jaGFubmVsIjp0cnVlLCJpYXQiOjE2NzgyOTIxMTMsImV4cCI6MTY3ODI5MzkxM30.bQ-7KfRJ-YDapAXQCvnnzdyVlbt6foV-Dc1o7F2NCTeD9Ff5ZT6R5-BDB-H6E81zvWR8T1JUFPBy7pugcwzJ2g"
-        accessToken = newToken
-        return newToken
-    }
-
-    private val Response.retryCount: Int
-        get() {
-            var currentResponse = priorResponse
-            var result = 0
-            while (currentResponse != null) {
-                result++
-                currentResponse = currentResponse.priorResponse
-            }
-            return result
-        }
 }
+
+
+private fun getNewToken(): String {
+    Log.d("Interceptor Log", "Set new token")
+    val newToken = "Bearer eyJhbGciOiJIUzUxMiIsImtpZCI6ImFjY2Vzcy1zZWNyZXQtMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEyNDc1MywiY2hhbm5lbCI6ImNvbS50cnVzdGVkLmJpbmsud2FsbGV0IiwiaXNfdGVzdGVyIjpmYWxzZSwiaXNfdHJ1c3RlZF9jaGFubmVsIjp0cnVlLCJpYXQiOjE2Nzg3MDE3MzQsImV4cCI6MTY3ODcwMzUzNH0.eSyh_G5-YncMZvc8dqqIBHVlBiYlld_8NQ1MVsAnX8-2nBkxT-bd9R6nE4mHfEqoe2AeDpNUg1vlWNnxvH-78w"
+    accessToken = newToken
+    return newToken
+}
+
+private val Response.retryCount: Int
+    get() {
+        var currentResponse = priorResponse
+        var result = 0
+        while (currentResponse != null) {
+            result++
+            currentResponse = currentResponse.priorResponse
+        }
+        return result
+    }
