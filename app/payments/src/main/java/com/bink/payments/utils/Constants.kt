@@ -5,7 +5,6 @@ const val SPREEDLY_RETROFIT = "spreedlyRetrofit"
 
 const val BINK_PAYMENTS_OKHTTP = "binkPaymentsOkhttp"
 const val BINK_PAYMENTS_RETROFIT = "binkPaymentsRetrofit"
-const val BINK_PAYMENTS_AUTHENTICATOR = "binkPaymentsAuthenticator"
 
 const val BASE_URL = "https://api.staging.gb.bink.com/v2/"
 
